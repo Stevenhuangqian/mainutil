@@ -1,0 +1,145 @@
+package com.efun.mainland.util;
+
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
+
+import javax.servlet.http.HttpServletRequest;
+import org.apache.log4j.Logger;
+
+import com.efun.general.GeneralHelper;
+
+/**
+ * 获取ip地址
+ * 
+ * @author Administrator
+ *
+ */
+public class IpUtil {
+	private static final Logger log = Logger.getLogger(IpUtil.class);
+
+	/**
+	 * @param request
+	 *            IP
+	 * @return IP Address
+	 */
+	public static final String getIpAddrByRequest(HttpServletRequest request) {
+		StringBuilder ip = null;
+		String temp = request.getHeader("X-Real-IP");
+		if (temp != null) {
+			ip = new StringBuilder(temp);
+		}
+		if (isInvalidIp(ip)) {
+			temp = request.getHeader("X-Forwarded-For");
+			if (temp != null) {
+				ip = new StringBuilder(temp);
+			}
+
+			if (temp == null || isInvalidIp(ip)) {
+				temp = request.getHeader("Proxy-Client-IP");
+				if (temp != null) {
+					ip = new StringBuilder(temp);
+				}
+
+				if (temp == null || isInvalidIp(ip)) {
+					temp = request.getHeader("WL-Proxy-Client-IP");
+					if (temp != null) {
+						ip = new StringBuilder(temp);
+					}
+
+					if (temp == null || isInvalidIp(ip)) {
+						temp = request.getRemoteAddr();
+						if (temp != null) {
+							ip = new StringBuilder(temp);
+						}
+					}
+				}
+			}
+		}
+
+		String ipStr = (ip != null ? ip.toString() : "127.0.0.1");
+		if ("127.0.0.1".equals(ipStr)) {
+			try {
+				temp = getRealIp();
+				if (temp != null) {
+					ipStr = temp;
+				}
+			} catch (Exception e) {
+			}
+		}
+
+		if (GeneralHelper.isStrIPAddress(ipStr)) {
+			return ipStr;
+		} else {
+			log.error(new StringBuilder().append("=====getIpAddr:error===== ip>>>").append(ipStr).toString());
+			return "";
+		}
+	}
+
+	private static final boolean isInvalidIp(StringBuilder ip) {
+		// "unknown".equalsIgnoreCase(ip)替换为(ip.length()==7&&ip.indexOf(".")==-1)
+		if (ip == null) {
+			return true;
+		} else {
+			int length = ip.length();
+			String ipStr = ip.toString();
+			if (length < 7 || ipStr.indexOf(".") == -1) {
+				return true;
+			}
+			if (ipStr.indexOf(",") == -1) {
+				return (ipStr.startsWith("172.") || ipStr.startsWith("192.") || ipStr.startsWith("10."));
+			} else {
+				String[] ips = ip.toString().split("\\,| ");
+				boolean result = true;
+				for (String temp : ips) {
+					temp = temp.trim();
+					length = temp.length();
+					if (length < 7 || temp.indexOf(".") == -1 || temp.startsWith("172.") || temp.startsWith("192.")
+							|| temp.startsWith("10.")) {
+					} else {
+						result = false;
+						ip.setLength(0);
+						ip.append(temp);
+						break;
+					}
+				}
+				return result;
+			}
+		}
+	}
+
+	/**
+	 * @return 本机有外网IP则返回外网IP，否则返回本地IP
+	 * @throws SocketException
+	 */
+	private final static String getRealIp() throws SocketException {
+		String localip = null;// 本地IP，如果没有配置外网IP则返回它
+		String netip = null;// 外网IP
+
+		Enumeration<NetworkInterface> netInterfaces = NetworkInterface.getNetworkInterfaces();
+		InetAddress ip = null;
+		boolean finded = false;// 是否找到外网IP
+		while (netInterfaces.hasMoreElements() && !finded) {
+			NetworkInterface ni = netInterfaces.nextElement();
+			Enumeration<InetAddress> address = ni.getInetAddresses();
+			while (address.hasMoreElements()) {
+				ip = address.nextElement();
+				if (!ip.isSiteLocalAddress() && !ip.isLoopbackAddress() && ip.getHostAddress().indexOf(":") == -1) {// 外网IP
+					netip = ip.getHostAddress();
+					finded = true;
+					break;
+				} else
+					if (ip.isSiteLocalAddress() && !ip.isLoopbackAddress() && ip.getHostAddress().indexOf(":") == -1) {// 内网IP
+					localip = ip.getHostAddress();
+				}
+			}
+		}
+
+		if (netip != null && !"".equals(netip)) {
+			return netip;
+		} else {
+			return localip;
+		}
+	}
+}

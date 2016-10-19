@@ -1,0 +1,22 @@
+package com.efun.mainland.util.db;
+
+import com.efun.mainland.util.db.annotation.SelectDataBase.DataBase;
+
+public class DBDecision {
+
+	private static final ThreadLocal<DataBase> holder = new ThreadLocal<DataBase>();
+
+	public static final DataBase get() {
+		return holder.get();
+	}
+
+	public static final void reset() {
+		// holder.set(null);
+		holder.remove();
+	}
+
+	public static final void set(DataBase dataBase) {
+		holder.set(dataBase);
+	}
+
+}

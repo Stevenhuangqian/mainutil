@@ -1,0 +1,296 @@
+package com.efun.mainland.util.redis;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+//注释掉的为ShardedJedis中不支持的操作，在Jedis中是支持的。
+/**
+ * redis客户端一致性哈希集群配置下常用的功能操作方法接口类
+ * 
+ * @author Administrator
+ */
+public interface IRedisService {
+
+	Long append(byte[] key, byte[] value);
+
+	Long append(String key, String value);
+
+	Long bitcount(byte[] key);
+
+	Long bitcount(String key);
+
+	Long bitcount(byte[] key, long start, long end);
+
+	Long bitcount(String key, long start, long end);
+
+	Long del(byte[] key);
+
+	// Long del(byte[]... key);
+
+	Long del(String key);
+
+	// Long del(String... key);
+
+	Boolean exists(byte[] key);
+
+	Boolean exists(String key);
+
+	Long expire(byte[] key, int seconds);
+
+	Long expire(String key, int seconds);
+
+	Long expireAt(byte[] key, long unixTime);
+
+	Long expireAt(String key, long unixTime);
+
+	byte[] get(byte[] key);
+
+	String get(String key);
+
+	byte[] getSet(byte[] key, byte[] value);
+
+	String getSet(String key, String value);
+
+	Long hdel(byte[] key, byte[]... fields);
+
+	Long hdel(String key, String... fields);
+
+	Boolean hexists(byte[] key, byte[] field);
+
+	Boolean hexists(String key, String field);
+
+	byte[] hget(byte[] key, byte[] field);
+
+	String hget(String key, String field);
+
+	Map<byte[], byte[]> hgetAll(byte[] key);
+
+	Map<String, String> hgetAll(String key);
+
+	Set<byte[]> hkeys(byte[] key);
+
+	Set<String> hkeys(String key);
+
+	Long hlen(byte[] key);
+
+	Long hlen(String key);
+
+	List<byte[]> hmget(byte[] key, byte[]... fields);
+
+	List<String> hmget(String key, String... fields);
+
+	String hmset(byte[] key, Map<byte[], byte[]> hash);
+
+	String hmset(String key, Map<String, String> hash);
+
+	Long hset(byte[] key, byte[] field, byte[] value);
+
+	Long hset(String key, String field, String value);
+
+	Long hsetnx(byte[] key, byte[] field, byte[] value);
+
+	Long hsetnx(String key, String field, String value);
+
+	Collection<byte[]> hvals(byte[] key);
+
+	List<String> hvals(String key);
+
+	// Set<byte[]> keys(byte[] pattern);
+
+	// Set<String> keys(String pattern);
+
+	byte[] lindex(byte[] key, long index);
+
+	String lindex(String key, long index);
+
+	Long llen(byte[] key);
+
+	Long llen(String key);
+
+	byte[] lpop(byte[] key);
+
+	String lpop(String key);
+
+	Long lpush(byte[] key, byte[]... strings);
+
+	Long lpush(String key, String... strings);
+
+	Long lpushx(byte[] key, byte[]... strings);
+
+	Long lpushx(String key, String... strings);
+
+	List<byte[]> lrange(byte[] key, long start, long end);
+
+	List<String> lrange(String key, long start, long end);
+
+	Long lrem(byte[] key, long count, byte[] value);
+
+	Long lrem(String key, long count, String value);
+
+	String lset(byte[] key, long index, byte[] value);
+
+	String lset(String key, long index, String value);
+
+	String ltrim(byte[] key, long start, long end);
+
+	String ltrim(String key, long start, long end);
+
+	// List<byte[]> mget(byte[]... keys);
+
+	// List<String> mget(String... keys);
+
+	// Long persist(byte[] key);
+
+	// Long persist(String key);
+
+	// Long pexpire(byte[] key, long milliseconds);
+
+	// Long pexpire(String key, long milliseconds);
+
+	// Long pexpireAt(byte[] key, long milliseconds);
+
+	// Long pexpireAt(String key, long milliseconds);
+
+	// String rename(byte[] oldkey, byte[] newkey);
+
+	// String rename(String oldkey, String newkey);
+
+	// Long renamenx(byte[] oldkey, byte[] newkey);
+
+	// Long renamenx(String oldkey, String newkey);
+
+	byte[] rpop(byte[] key);
+
+	String rpop(String key);
+
+	// byte[] rpoplpush(byte[] srckey, byte[] dstkey);
+
+	// String rpoplpush(String srckey, String dstkey);
+
+	Long rpush(byte[] key, byte[]... strings);
+
+	Long rpush(String key, String... strings);
+
+	Long rpushx(byte[] key, byte[]... strings);
+
+	Long rpushx(String key, String... strings);
+
+	Long sadd(byte[] key, byte[]... members);
+
+	Long sadd(String key, String... members);
+
+	Long scard(byte[] key);
+
+	Long scard(String key);
+
+	String set(byte[] key, byte[] value);
+
+	String set(String key, String value);
+
+	Long setnx(byte[] key, byte[] value);
+
+	Long setnx(String key, String value);
+
+	String setex(byte[] key, int seconds, byte[] value);
+
+	String setex(String key, int seconds, String value);
+
+	Boolean sismember(byte[] key, byte[] member);
+
+	Boolean sismember(String key, String member);
+
+	Set<byte[]> smembers(byte[] key);
+
+	Set<String> smembers(String key);
+
+	byte[] spop(byte[] key);
+
+	String spop(String key);
+
+	Long srem(byte[] key, byte[]... members);
+
+	Long srem(String key, String... members);
+
+	// Set<byte[]> sunion(byte[]... key);
+
+	// Set<String> sunion(String... key);
+
+	Long zadd(byte[] key, Map<byte[], Double> scoreMembers);
+
+	Long zadd(String key, Map<String, Double> scoreMembers);
+
+	Long zadd(byte[] key, double score, byte[] member);
+
+	Long zadd(String key, double score, String member);
+
+	Long zcard(byte[] key);
+
+	Long zcard(String key);
+
+	Set<byte[]> zrange(byte[] key, long start, long end);
+
+	Set<String> zrange(String key, long start, long end);
+
+	Long zrank(byte[] key, byte[] member);
+
+	Long zrank(String key, String member);
+
+	Long zrem(byte[] key, byte[]... members);
+
+	Long zrem(String key, String... members);
+
+	Double zscore(byte[] key, byte[] member);
+
+	Double zscore(String key, String member);
+
+	Long ttl(String key);
+
+	Long ttl(byte[] key);
+
+	// Long pttl(String key);
+
+	// Long pttl(byte[] key);
+
+	String type(String key);
+
+	String type(byte[] key);
+
+	Long decr(String key);
+
+	Long decr(byte[] key);
+
+	Long decrBy(String key, long value);
+
+	Long decrBy(byte[] key, long value);
+
+	Long incr(String key);
+
+	Long incr(byte[] key);
+
+	Long incrBy(String key, long value);
+
+	Long incrBy(byte[] key, long value);
+
+	Double incrByFloat(String key, double value);
+
+	Double incrByFloat(byte[] key, double value);
+
+	Long hincrBy(String key, String field, long value);
+
+	Long hincrBy(byte[] key, byte[] field, long value);
+
+	Double hincrByFloat(String key, String field, double value);
+
+	Double hincrByFloat(byte[] key, byte[] field, double value);
+
+	List<String> blpop(String key);
+
+	List<byte[]> blpop(byte[] key);
+
+	List<String> brpop(String key);
+
+	List<byte[]> brpop(byte[] key);
+
+}

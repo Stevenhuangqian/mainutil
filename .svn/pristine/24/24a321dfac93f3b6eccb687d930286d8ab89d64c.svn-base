@@ -1,0 +1,429 @@
+package com.efun.mainland.util;
+
+import java.io.File;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.apache.log4j.Logger;
+
+
+/**
+ * 属性文件自动加载器
+ * 
+ * @author Administrator
+ *
+ */
+public class PropertiesFileLoader {
+	/**
+	 * web工程根路径
+	 */
+	private static final String WEB_ROOT;
+
+	/**
+	 * web工程下的WEB-INF路径
+	 */
+	private static final String WEB_INF_PATH;
+
+	/**
+	 * web工程下的classpath路径
+	 */
+	private static final String CLASS_PATH;
+
+	/**
+	 * 取当前操作系统版本名
+	 */
+	private static final String SYSTEM_NAME = System.getProperty("os.name");
+
+	private static final boolean IS_WINDOWNS = (SYSTEM_NAME == null ? false
+			: (SYSTEM_NAME.toLowerCase().contains("windows") ? true : false));
+
+	/**
+	 * 加载状态值
+	 */
+	private static final AtomicBoolean IS_LOAD = new AtomicBoolean(false);
+
+	/**
+	 * 默认间隔时间为5s
+	 */
+	private String intervalTime = "10";
+
+	/**
+	 * 是否加载所有文件
+	 */
+	private boolean reloadAll = false;
+	/**
+	 * 文件类型
+	 */
+	private ArrayList<String> fileTypeList = new ArrayList<String>();
+	/**
+	 * 包含文件
+	 */
+	private ArrayList<String> includeList = new ArrayList<String>();
+	/**
+	 * 不包含文件
+	 */
+	private ArrayList<String> exclusiveList = new ArrayList<String>();
+	/**
+	 * 定时器
+	 */
+	private Timer timer = null;
+	/**
+	 * 加载的文件
+	 */
+	private Map<String, Long> filesMap = new HashMap<String, Long>();
+
+	private static final Logger logger = Logger.getLogger(PropertiesFileLoader.class);
+
+	static {
+		CLASS_PATH = getClassPath();
+		WEB_INF_PATH = chopLastSection(CLASS_PATH);
+		WEB_ROOT = chopLastSection(WEB_INF_PATH);
+	}
+	
+	public static final boolean isWindows(){
+		return IS_WINDOWNS;
+	}
+
+	/**
+	 * 获取web工程根路径，该路径以文件分隔符结束
+	 * 
+	 * @return web工程根路径
+	 */
+	public static final String getWebRoot() {
+		return WEB_ROOT;
+	}
+
+	/**
+	 * 获取web工程下的WEB-INF路径，该路径以文件分隔符结束
+	 * 
+	 * @return web工程下的WEB-INF路径
+	 */
+	public static final String getWebInfPath() {
+		return WEB_INF_PATH;
+	}
+
+	private static final String chopLastSeparator(String src) {
+		if (src!=null&&src.endsWith(File.separator)) {
+			src = src.substring(0, src.lastIndexOf(File.separator));
+		}
+		return src;
+	}
+
+	private static final String chopLastSection(String src) {
+		if(src==null){
+			return null;
+		}
+		String temp = chopLastSeparator(src);
+		return temp.substring(0, temp.lastIndexOf(File.separator) + 1);
+	}
+
+	/**
+	 * 获取classpath
+	 * 
+	 * @return classpath
+	 */
+	public static final String getClassPath() {
+		String url=null;
+		try {
+			try {
+				url= getDefaultClassLoader().getResource("/").toString().replace("/", File.separator);
+			} catch (Exception e) {
+			}
+
+			System.out.println("load ClassLoader init:"+url);
+			logger.info("load ClassLoader init:"+url);
+			if(CommonUtil.objectIsNotNull(url)){
+				while(url.endsWith(File.separator)){
+					url=url.substring(0, url.length()-1);
+				}
+			}
+			
+			if(CommonUtil.objectIsNull(url)||(!url.endsWith("classes"))){
+				url = PropertiesFileLoader.class.getProtectionDomain().getCodeSource().getLocation().getPath().replace("/", File.separator);
+				System.out.println("load ClassLoader success: PropertiesFileLoader.class.getProtectionDomain().getCodeSource().getLocation().getPath()");
+				logger.info("load ClassLoader success: PropertiesFileLoader.class.getProtectionDomain().getCodeSource().getLocation().getPath()");
+			}
+			
+			int index=url.indexOf("WEB-INF");
+			if(index!=-1){
+				url=url.substring(0, index);
+				while(url.endsWith(File.separator)){
+					url=url.substring(0, url.length()-1);
+				}
+				url=url+File.separator+"WEB-INF"+File.separator+"classes";
+			}
+			
+			System.out.println("load ClassLoader finish:"+url);
+			logger.info("load ClassLoader finish:"+url);
+			
+			url = URLDecoder.decode(url, Charset.defaultCharset().toString());
+			String prefix = "file:".concat(File.separator);
+			if (url.startsWith(prefix)) {
+				url = url.substring(prefix.length());
+				if (!IS_WINDOWNS) {
+					if (url.indexOf(":") > -1) {
+						url = url.substring(File.separator.length());
+					}
+				}
+			}
+			if (!IS_WINDOWNS) {
+				if(!url.startsWith("/")){
+					url = "/" + url;
+				}
+				if(!url.endsWith("/")){
+					url =  url+"/";
+				}
+			}else{
+				if(url.startsWith("\\")){
+					url = url.substring(1);
+				}
+				if(!url.endsWith("\\")){
+					url =url+ "\\" ;
+				}
+			}
+		} catch (Exception e) {
+			logger.error("The system should always have the platform default:"+e.getMessage(),e);
+			System.out.println("The system should always have the platform default:"+e.getMessage());
+		}finally{
+			System.out.println("classpath:"+url);
+			logger.info("classpath:"+url);
+		}
+		return url;
+	}
+
+	public String getIntervalTime() {
+		return intervalTime;
+	}
+
+	public void setIntervalTime(String intervalTime) {
+		if(CommonUtil.isNumeric(intervalTime)){
+			this.intervalTime = intervalTime;
+		}
+	}
+
+	public ArrayList<String> getFileTypeList() {
+		return fileTypeList;
+	}
+
+	public void setFileTypeList(ArrayList<String> fileTypeList) {
+		if(fileTypeList!=null){
+			this.fileTypeList = fileTypeList;
+		}
+	}
+
+	public ArrayList<String> getIncludeList() {
+		return includeList;
+	}
+
+	public void setIncludeList(ArrayList<String> includeList) {
+		if(includeList!=null){
+			this.includeList = includeList;
+		}
+	}
+
+	public ArrayList<String> getExclusiveList() {
+		return exclusiveList;
+	}
+
+	public void setExclusiveList(ArrayList<String> exclusiveList) {
+		if(exclusiveList!=null){
+			this.exclusiveList = exclusiveList;
+		}
+	}
+
+	private static final String getFileSuffix(String fileName) {
+		int index = fileName.lastIndexOf(".");
+		if (index != -1) {
+			return fileName.substring(index + 1);
+		} else {
+			return "";
+		}
+	}
+
+	private static final String getRelativeClassPath(String filePath) {
+		if (filePath.startsWith(CLASS_PATH)) {
+			return filePath.substring(CLASS_PATH.length());
+		} else {
+			return filePath;
+		}
+	}
+	
+	private boolean isInclude(String filePath){
+		if(CommonUtil.objectIsNotNull(filePath)&&includeList.size()>0){
+			for(String str:includeList){
+				if(CommonUtil.objectIsNotNull(str)&&filePath.startsWith(str)){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private synchronized void reloadFile(File file,boolean relativeClassPath) {
+		if (file.canRead()) {
+			if (file.isFile()) {
+				String filePath = file.getAbsolutePath();
+				String tempPath = getRelativeClassPath(filePath);
+				if ((reloadAll
+						|| fileTypeList.contains(getFileSuffix(filePath)) || 
+						isInclude(filePath))
+						&& !(relativeClassPath?exclusiveList.contains(tempPath):exclusiveList.contains(filePath))) {
+					Long lastTime = filesMap.get(filePath);
+					if (lastTime == null
+							|| lastTime.longValue() != file.lastModified()) {
+						filesMap.put(filePath, file.lastModified());
+						if(relativeClassPath&&filePath.endsWith(".properties")){
+							if (lastTime == null
+									&& PropertiesCacheUtil.containFile(tempPath)) {
+								System.out.println("load file [classpath]:{"
+										+ tempPath + "} result: yes");
+								logger.info("load file [classpath]:{" + tempPath
+										+ "} result:yes ");
+							} else {
+								String reslut = PropertiesCacheUtil
+										.reLoadPropertiesFile(tempPath);
+								System.out.println("reload file [classpath]:{"
+										+ tempPath + "} result: " + reslut);
+								logger.info("reload file [classpath]:{" + tempPath
+										+ "} result: " + reslut);
+							}
+						}else{
+							if (lastTime == null
+									&& FileCacheUtil.containFile(filePath)) {
+								System.out.println("load file [absolutepath]:{"
+										+ filePath + "} result: yes");
+								logger.info("load file [absolutepath]:{" + filePath
+										+ "} result:yes ");
+							} else {
+								String reslut = FileCacheUtil.reLoadFile(filePath);
+								System.out.println("reload file [absolutepath]:{"
+										+ filePath + "} result: " + reslut);
+								logger.info("reload file [absolutepath]:{" + filePath
+										+ "} result: " + reslut);
+							}
+						}
+					}
+				}
+			} else if (file.isDirectory()) {
+				File[] tempFiles = file.listFiles();
+				if(tempFiles != null && tempFiles.length > 0){
+					for (File temp : tempFiles) {
+						reloadFile(temp,relativeClassPath);
+					}
+				}
+			}
+		}
+	}
+
+	public void init() {
+		if (!IS_LOAD.getAndSet(true)) {
+			long myIntervalTime = 5000;
+			if (CommonUtil.isNumeric(intervalTime)) {
+				myIntervalTime = Integer.valueOf(intervalTime) * 1000L;
+			}
+			if (fileTypeList.size() == 0) {
+				reloadAll = true;
+			} else {
+				reloadAll = false;
+			}
+
+			timer = new Timer();
+			timer.scheduleAtFixedRate(new TimerTask() {
+
+				public void run() {
+					File classFile = new File(CLASS_PATH);
+					if (classFile.exists() && classFile.isDirectory()) {
+						File[] files = classFile.listFiles();
+						if (files == null || files.length == 0) {
+							logger.info("classpath: {" + CLASS_PATH
+									+ "} is a empty directory");
+						} else {
+							for (File file : files) {
+								try {
+									reloadFile(file,true);
+								} catch (Exception e) {
+									logger.error("reload file exception", e);
+								}
+							}
+						}
+					} else {
+						logger.info("classpath: {" + CLASS_PATH
+								+ "} is not found or is not directory");
+					}
+					
+					if(includeList.size()>0){
+						for(String str:includeList){
+							if(CommonUtil.objectIsNotNull(str)){
+								File file=new File(str);
+								if(file.exists()){
+									reloadFile(file, false);
+								}
+							}
+						}
+					}
+				}
+			}, 30 * 1000 + myIntervalTime, myIntervalTime);
+			logger.info("PropertiesFileLoader timer init");
+			System.out.println("PropertiesFileLoader timer init");
+			logger.info("classpath:"+CLASS_PATH);
+			System.out.println("classpath:"+CLASS_PATH);
+		}
+	}
+
+	public void destroy() {
+		destory();
+	}
+	
+	public void destory() {
+		if (timer != null) {
+			try {
+				timer.cancel();
+			} catch (Exception e) {
+				logger.error("PropertiesFileLoader timer destroy fail", e);
+			} finally {
+				timer = null;
+				IS_LOAD.set(false);
+				logger.info("PropertiesFileLoader timer destroy");
+			}
+		}
+	}
+	
+	public static final ClassLoader getDefaultClassLoader() {
+		ClassLoader cl = null;
+		try {
+			cl = Thread.currentThread().getContextClassLoader();
+		}
+		catch (Throwable ex) {
+		}
+		if (cl == null) {
+			cl = PropertiesFileLoader.class.getClassLoader();
+			if (cl == null) {
+				try {
+					cl = ClassLoader.getSystemClassLoader();
+				}
+				catch (Throwable ex) {
+				}
+				if (cl == null) {
+					System.out.println("load ClassLoader fail");
+					logger.info("load ClassLoader fail");
+				}else{
+					System.out.println("load ClassLoader success: ClassLoader.getSystemClassLoader()");
+					logger.info("load ClassLoader success: ClassLoader.getSystemClassLoader()");
+				}
+			}else{
+				System.out.println("load ClassLoader success: this.class.getClassLoader()");
+				logger.info("load ClassLoader success: this.class.getClassLoader()");
+			}
+		}else{
+			System.out.println("load ClassLoader success: Thread.currentThread().getContextClassLoader()");
+			logger.info("load ClassLoader success: Thread.currentThread().getContextClassLoader()");
+		}
+		return cl;
+	}
+}

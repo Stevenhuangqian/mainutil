@@ -1,0 +1,77 @@
+package com.efun.mainland.util;
+
+import java.security.Key;
+
+import javax.crypto.Cipher;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESedeKeySpec;
+import javax.crypto.spec.IvParameterSpec;
+
+public class SecretUtil {
+
+	private static final String IV_3DES = "efun2015";// 长度必须是8
+	private static SecretKeyFactory KEY_FACTORY;
+	private static IvParameterSpec IPS;
+	private static final String DEFAULT_SECRET_KEY = "com.efun_20150311_secret";// 长度必须是24
+	static {
+		try {
+			KEY_FACTORY = SecretKeyFactory.getInstance("desede");
+			IPS = new IvParameterSpec(IV_3DES.getBytes("UTF-8"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			KEY_FACTORY = null;
+			IPS = new IvParameterSpec(IV_3DES.getBytes());
+		}
+	}
+
+	/**
+	 * 加密
+	 * 
+	 * @param plainText
+	 * @param secretKey
+	 * @return
+	 * @throws Exception
+	 */
+	public static final String encrypt(String plainText, String secretKey)
+			throws Exception {
+		if (secretKey == null || secretKey.length() != 24) {
+			secretKey = DEFAULT_SECRET_KEY;
+		}
+		DESedeKeySpec spec = new DESedeKeySpec(secretKey.getBytes("UTF-8"));
+		Key deskey = KEY_FACTORY.generateSecret(spec);
+		Cipher cipher = Cipher.getInstance("desede/CBC/PKCS5Padding");
+		cipher.init(Cipher.ENCRYPT_MODE, deskey, IPS);
+		byte[] encryptData = cipher.doFinal(plainText.getBytes("UTF-8"));
+		String base64_ciphertext = Base64Util.encode(encryptData);
+		return base64_ciphertext;
+	}
+
+	/**
+	 * 解密
+	 * 
+	 * @param encryptText
+	 * @param secretKey
+	 * @return
+	 * @throws Exception
+	 */
+	public static final String decrypt(String encryptText, String secretKey)
+			throws Exception {
+		if (secretKey == null || secretKey.length() != 24) {
+			secretKey = DEFAULT_SECRET_KEY;
+		}
+		DESedeKeySpec spec = new DESedeKeySpec(secretKey.getBytes("utf-8"));
+		Key deskey = KEY_FACTORY.generateSecret(spec);
+		Cipher cipher = Cipher.getInstance("desede/CBC/PKCS5Padding");
+		cipher.init(Cipher.DECRYPT_MODE, deskey, IPS);
+		byte[] decryptData = cipher.doFinal(Base64Util.decode(encryptText
+				.getBytes("UTF-8")));
+		return new String(decryptData, "UTF-8");
+	}
+
+	public static void main(String[] args) throws Exception {
+		System.out
+				.println(decrypt(
+						"npVar518eAC7HXx5CwUSROCQqhhUtwmgiX8Dd6oz+Kzc5hZoP6/Dyi1TQWBc8Ab+3+cgeva3E/G6Hxj4IEGDcvMaVEnh6IPB21WOR1AxEPqLXpnnU0hBE/JniotSte8iFU+KCdPeEnxPsgYKmTafQ0eNKckU5tyoizVwjkYyNsWNklA+k1gCT0B+lvIOEopyQweg8oI3qsKXRzyaU4E/GDxCjLjw5leq9euAU4hzibA8rgzBgwVC/DjGbe8/4e61ztygbhf5lGK1Kp5P9ZYma6CZgwmtjpAYHIdiRZ81VaT0FWlSpLZAwruo/Gfr85oZO4+a5EaKc6l0rf3VhdtY7JphcZ4e36V/juAxac55WJrSlnjcJ7Hh+J0763CS8S0229kne/1Zpr24Ko3DXMdmbR5whIB2C/EKO12MJt7TL9uUR61LB4J05R+N/vt3qxuhXjG6UTMo8bPneQHIgh9PUYcdx7O0kBGAIeuGVzDXSuv/Uw+1+jubB/2nqBY0pmGzMpco/Zo0+bcDGQbUeHcRMPhxmffLpMHftDrcD+RzSAy7c5iPra+8pRxs/YgMtdyZ2NhN/oDmziDL2jhCdorL1m1EDkN+slaVTkqW7NMGfKzN5QGtPtM/gNflrSmicM0M9rNDaEqI7LBFebxrX1FobouLdmTltJDhJxRQmVwW92jX6kj2gROQCX3x15qigHmNVLlTE7d90j2CKaD4TnHlGYDz0RYnudh7ebh8hkiNxbD3M2rdIrd8w9HPpD1GtqCOWljuZs9opYVIEEn+xdoH3DhMo0CjdlEqconPeZRaKXOxCvCwlFmeORlBVmyoeW7dfT5UQw83kgPGI5xU7C0Q+Z4xR8Bh8qxezhHCRmooaiKcgz7HixdXq7oRR5oOBzZ14UW+Jn/jJ57KsZTxXqSWF1Q0hSADE04FCWHymqIxxb0BG6HGI1upenr9ylVN3yVK92U6Un07+x15GqB3blBdhVxLJvq54PoJrkhBqEit3aPeRFhk6yCmcamhfsuMNetP",
+						""));
+	}
+}

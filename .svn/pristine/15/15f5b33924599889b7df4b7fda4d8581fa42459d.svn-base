@@ -1,0 +1,106 @@
+package com.efun.mainland.util;
+
+import java.io.File;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.xml.DOMConfigurator;
+import org.apache.logging.log4j.LogManager;
+
+import com.efun.mainland.util.PropertiesFileLoader;
+
+public class Log4jConfigListener implements ServletContextListener {
+	private static final String LOG4J_LOCATION = "log4jLocation";
+	private static final String XML_FILE_EXTENSION = ".xml";
+	public static final String SERVER_ID = "server_id";
+	public static final String ROOT_PATH = "root_path";
+
+	@Override
+	public void contextInitialized(ServletContextEvent servletContextEvent) {
+		ServletContext servletContext = servletContextEvent.getServletContext();
+		String location = servletContext.getInitParameter(LOG4J_LOCATION);
+		String logFilePath = null;
+		if (location == null || location.trim().length() == 0) {
+			if (!new File(logFilePath = PropertiesFileLoader.getClassPath() + "log4j2.json").exists()) {
+				if (!new File(logFilePath = PropertiesFileLoader.getClassPath() + "log4j2.xml").exists()) {
+					if (!new File(logFilePath = PropertiesFileLoader.getClassPath() + "log4j2.properties").exists()) {
+						if (!new File(logFilePath = PropertiesFileLoader.getClassPath() + "log4j.xml").exists()) {
+							if (!new File(logFilePath = PropertiesFileLoader.getClassPath() + "log4j.properties")
+									.exists()) {
+								logFilePath = null;
+							}
+						}
+					}
+				}
+			}
+		} else {
+			if (!new File(logFilePath = PropertiesFileLoader.getClassPath() + location).exists()) {
+				logFilePath = null;
+			}
+		}
+
+		String serverId = getServerId();
+		String system = System.getProperty("os.name");
+		if (system != null && system.toLowerCase().contains("windows")) {
+			system = "D:";
+		} else {
+			system = "";
+		}
+		System.setProperty(ROOT_PATH, system);
+		System.out.println(ROOT_PATH + "=" + system);
+		System.setProperty(SERVER_ID, serverId);
+		System.out.println(SERVER_ID + "=" + serverId);
+
+		if (logFilePath != null) {
+			try {
+				if (logFilePath.endsWith("log4j2.xml") || logFilePath.endsWith("log4j2.json")
+						|| logFilePath.endsWith("log4j2.properties")) {
+					System.setProperty("Log4jContextSelector", "org.apache.logging.log4j.core.async.AsyncLoggerContextSelector");
+					((org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false))
+							.setConfigLocation(new File(logFilePath).toURI());
+				} else if (logFilePath.endsWith(XML_FILE_EXTENSION)) {
+					DOMConfigurator.configure(logFilePath);
+				} else {
+					PropertyConfigurator.configure(logFilePath);
+				}
+			} catch (Exception e) {
+				throw new IllegalArgumentException("初始化log4j参数失败: " + e.getMessage());
+			}
+		}
+
+	}
+
+	@Override
+	public void contextDestroyed(ServletContextEvent event) {
+	}
+
+	/**
+	 * "sun.java.command":"com.caucho.server.resin.Resin --root-directory
+	 * /usr/local/resin/ -conf
+	 * /usr/local/resin/conf/vhost/analysis.efun.com.conf -socketwait 41798
+	 * -server analysis01 restart"
+	 */
+	private static final String getServerId() {
+		String serverid = "";
+		String startCommand = System.getProperty("sun.java.command");
+		if (startCommand != null) {
+			String[] str = startCommand.split(" ");
+
+			one: for (int i = 0; i < str.length; i++) {
+				if ("-server".equalsIgnoreCase(str[i].trim())) {
+					int j = i;
+					while (++j < str.length && (serverid = str[j].trim()).length() > 0) {
+						serverid = "." + serverid;
+						break one;
+					}
+					break one;
+				}
+			}
+		}
+		return serverid;
+	}
+
+}

@@ -1,0 +1,164 @@
+package com.efun.mainland.util;
+
+public class Contants {
+	/**
+	 * 返回成功
+	 */
+	public static final String RETURN_SUCCESS = "1000";
+	
+	/**
+	 * 沒有找到記錄
+	 */
+	public static final String NO_RESULT_FOUND = "1001";
+	
+	/**
+	 * 系統異常
+	 */
+	public static final String SYSTEM_ERROR = "1002";
+	
+	/**
+	 * 空值
+	 */
+	public static final String CHECK_EMPTY = "1003";
+	
+	
+	/**
+	 * 密碼輸入錯誤
+	 */
+	public static final String INPUT_PWD_ERROR = "1004";
+	
+	/**
+	 * 郵箱輸入錯誤
+	 */
+	public static final String INPUT_EMAIL_ERROR = "1005";
+	
+	/**
+	 * 已經存在記錄
+	 */
+	public static final String ALREADY_EXIST = "1006";
+	
+	/**
+	 * 來源為空
+	 */
+	public static final String REG_FROM_EMPTY = "1007";
+	
+	/**
+	 * 找回密碼發送郵件失敗
+	 */
+	public static final String FIND_EMAIL_ERROR = "1008";
+	
+	/**
+	 * 系统维护
+	 */
+	public static final String SYSTEM_MAINTENANCE = "1009";
+	
+	/**
+	 * 密匙錯誤
+	 */
+	public static final String SECRET_ERROR = "1010";
+	
+	/**
+	 * 字符编码转换异常
+	 */
+	public static final String ENCODE_ERROR = "1011";
+	
+	/**
+	 * 值过长
+	 */
+	public static final String TOOLONG_ERROR = "1012";
+	/**
+	 * 参数异常
+	 */
+	public static final String PARAMS_ERROR = "1013";
+	
+	/**
+	 * 返回失败
+	 */
+	public static final String RETURN_FAILE = "1014";
+	
+	/**
+	 * FB配置信息异常
+	 */
+	public static final String FB_CONFIG_ERROR = "1015";
+	
+	/**
+	 * 时间戳异常
+	 */
+	public static final String TIMESTAMP_ERROR = "1016";
+	
+	/**
+	 * FB发送异常
+	 */
+	public static final String FB_SEND_ERROR = "1017";
+	
+	/**
+	 * FB没有授权
+	 */
+	public static final String FB_NOT_AUTHORIZE = "1018";
+	
+	/**
+	 * 該遊戲不支持此業務
+	 */
+	public static final String NON_SUPPORT = "1019";
+	
+	/**
+	 * 服务器缓存有效时间
+	 */
+	public static final int SERVER_CACHE_TIME = 24*60*60*1000;
+	
+	/**
+	 * 用户缓存有效时间
+	 */
+	public static final int USER_CACHE_TIME = 7*24*60*60*1000;
+	
+	/**
+	 * siteCode緩存有效時間
+	 */
+	public static final int SITECODE_CACHE_TIME = 10*24*60*60*1000;
+	
+	/**
+	 * TIMESTAMP緩存有效時間
+	 */
+	public static final int TIMESTAMP_CACHE_TIME = 24*60*60*1000;
+
+	/**
+	 * 7天(缓存时间，毫秒)
+	 */
+	public static final int CACHE_SEVEN_DAY = 7*24*60*60*1000;
+	
+	/**
+	 * 7天(缓存时间，毫秒)
+	 */
+	public static final int CACHE_THIRTY_DAY = 30*24*60*60*1000;
+	
+	
+	/**
+	 * 10分钟(缓存时间，毫秒)
+	 */
+	public static final int CACHE_Ten_Minute =10*60*1000;
+	/**
+	 * 返回成 功 对外返回值
+	 */
+	public static final int FOREIGN_SUCCESS=1;
+	
+
+	/**
+	 * 返回失败 对外返回值
+	 */
+	public static final int FOREIGN_FAILURE=0;
+	
+	/**
+	 * 限制用户访问有效時間
+	 */
+	public static final int LIMIT_CACHE_TIME =24*60*60*1000;
+	
+	/**
+	 * 3分钟（缓存三分钟）
+	 */
+	public static final int THREE_MINUTES=3*60*1000;
+	
+	/**
+	 * Stringbuffer StringBuilder 换行显示
+	 */
+	public final static String WRAP="\r\n";
+}
