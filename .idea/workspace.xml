@@ -171,13 +171,13 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="File.Encoding" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/pom.xml" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.last.edited" value="Problems" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="ignore_missing_gitignore" value="true" />
@@ -681,7 +681,7 @@
       <workItem from="1476845740214" duration="3490000" />
       <workItem from="1476870788544" duration="555000" />
       <workItem from="1476871375277" duration="256000" />
-      <workItem from="1476871653141" duration="869000" />
+      <workItem from="1476871653141" duration="1398000" />
     </task>
     <task id="LOCAL-00001">
       <created>1470401617131</created>
@@ -1005,11 +1005,18 @@
       <option name="project" value="LOCAL" />
       <updated>1476872414483</updated>
     </task>
-    <option name="localTasksCounter" value="47" />
+    <task id="LOCAL-00047" summary="delete target">
+      <created>1476872533959</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1476872533959</updated>
+    </task>
+    <option name="localTasksCounter" value="48" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="177572000" />
+    <option name="totallyTimeSpent" value="178101000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
