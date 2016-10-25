@@ -243,18 +243,33 @@ public class HttpUtil {
 				conn.connect();
 			}
 			logger.debug(urlAddress);
-			BufferedInputStream bis = new BufferedInputStream(conn.getInputStream(), 1024);
+
+			tempCode = conn.getResponseCode();
+			BufferedInputStream bis;
+			if (tempCode==200){
+				bis= new BufferedInputStream(conn.getInputStream(), 1024);
+			}else{
+				bis= new BufferedInputStream(conn.getErrorStream(), 1024);
+			}
+
 			int length = -1;
 			StringBuilder result = new StringBuilder();
 			byte[] buf = new byte[1024];
 			while ((length = bis.read(buf)) != -1) {
 				result.append(new String(buf, 0, length, charset));
 			}
-			tempCode = conn.getResponseCode();
+
 			bis.close();
 			bis = null;
 			buf = null;
-			return result.toString();
+
+			if (tempCode==200){
+				return result.toString();
+			}else{
+				logger.error(new StringBuilder().append(urlAddress).append(" Code:").append(tempCode)
+						.append(" getUrlReturnValue Error>>>").append(result.toString()).toString());
+				return null;
+			}
 		} catch (Exception e) {
 			logger.error(new StringBuilder().append(urlAddress).append(" Code:").append(tempCode)
 					.append(" getUrlReturnValue Exception>>>").append(e.getMessage()).toString(), e);
