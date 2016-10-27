@@ -3,8 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.efun</groupId>
     <artifactId>mainland-util</artifactId>
-    <version>3.1.9</version>
+    <version>3.1.10</version>
     <name>mainland-util</name>
+    <description>Efun_Core</description>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <compiler.version>1.8</compiler.version>
