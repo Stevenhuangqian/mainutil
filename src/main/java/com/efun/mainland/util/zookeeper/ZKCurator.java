@@ -1,9 +1,6 @@
 package com.efun.mainland.util.zookeeper;
 
-import com.efun.mainland.util.CacheUtil;
-import com.efun.mainland.util.MD5Util;
-import com.efun.mainland.util.PropertiesCacheUtil;
-import com.efun.mainland.util.PropertiesFileLoader;
+import com.efun.mainland.util.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.RetryPolicy;
@@ -42,7 +39,14 @@ public final class ZKCurator {
     private static final String ZOOKEEPER_FILE = "zookeeper.properties";
 
     static {
-        File file = new File(PropertiesFileLoader.getClassPath(), ZOOKEEPER_FILE);
+        String area = PropertyConfigurer.getRegionSystemProperty();
+        String path;
+        if (area != null) {
+            path = PropertiesFileLoader.getClassPath() + area + File.separator;
+        } else {
+            path = PropertiesFileLoader.getClassPath();
+        }
+        File file = new File(path, ZOOKEEPER_FILE);
         if (file.exists()) {
             try {
                 init();
