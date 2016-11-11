@@ -1084,4 +1084,12 @@ public class CommonUtil {
             throw e;
         }
     }
+
+    public static final void closeResource(Closeable resource){
+        try {
+            resource.close();
+        }catch (Exception e){
+        }
+    }
+
 }
