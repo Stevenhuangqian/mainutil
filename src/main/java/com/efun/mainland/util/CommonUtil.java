@@ -27,8 +27,9 @@ public class CommonUtil {
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyMMddHHmmssSSS");
     private static final String upperLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    private static final char hexDigits[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E',
+    public static final char hexDigits[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E',
             'F'};
+    public static final char[] CHARS36 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 
     private static final Pattern IP4_PATTERN = Pattern.compile(
             "\\b((?!\\d\\d\\d)\\d+|1\\d\\d|2[0-4]\\d|25[0-5])\\.((?!\\d\\d\\d)\\d+|1\\d\\d|2[0-4]\\d|25[0-5])\\.((?!\\d\\d\\d)\\d+|1\\d\\d|2[0-4]\\d|25[0-5])\\.((?!\\d\\d\\d)\\d+|1\\d\\d|2[0-4]\\d|25[0-5])\\b");
@@ -1156,6 +1157,40 @@ public class CommonUtil {
             } else {
                 return buf.toString();
             }
+        }
+    }
+
+    /**
+     * 10进制转换为2-36进制转换
+     *
+     * @param value
+     * @param number
+     * @return
+     */
+    public static final StringBuilder ten2N(StringBuilder strBuilder, long value,
+                                            int number) {
+        if (number <= 1 || number > CHARS36.length) {
+            throw new RuntimeException("Failed");
+        }
+        if (strBuilder == null) {
+            strBuilder = new StringBuilder();
+        }
+
+        if (number == 10) {
+            return strBuilder.append(value);
+        }
+
+        // 负数处理
+        if (value < 0) {
+            ten2N(strBuilder, 0 - value, number);
+            return strBuilder.insert(0, "-");
+        }
+        if (value < number) {
+            return strBuilder.insert(0, CHARS36[(int) value]);
+        } else {
+            long n = value % (long) number;
+            strBuilder.insert(0, CHARS36[(int) n]);
+            return ten2N(strBuilder, value / number, number);
         }
     }
 
