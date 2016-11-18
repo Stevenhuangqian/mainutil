@@ -34,6 +34,9 @@ public class CommonUtil {
     private static final Pattern IP4_PATTERN = Pattern.compile(
             "\\b((?!\\d\\d\\d)\\d+|1\\d\\d|2[0-4]\\d|25[0-5])\\.((?!\\d\\d\\d)\\d+|1\\d\\d|2[0-4]\\d|25[0-5])\\.((?!\\d\\d\\d)\\d+|1\\d\\d|2[0-4]\\d|25[0-5])\\.((?!\\d\\d\\d)\\d+|1\\d\\d|2[0-4]\\d|25[0-5])\\b");
 
+    private static final Pattern PATTERN_CHINESE = Pattern.compile("[\u4e00-\u9fa5]");
+
+
     static {
         numberFormat = NumberFormat.getInstance();
         numberFormat.setGroupingUsed(false);
@@ -1191,6 +1194,21 @@ public class CommonUtil {
             long n = value % (long) number;
             strBuilder.insert(0, CHARS36[(int) n]);
             return ten2N(strBuilder, value / number, number);
+        }
+    }
+
+    /**
+     * 判断是否包含中文
+     *
+     * @param str
+     * @return
+     */
+    public static final boolean containsChinese(String str) {
+        Matcher matcher = PATTERN_CHINESE.matcher(str);
+        if (matcher.find()) {
+            return true;
+        } else {
+            return false;
         }
     }
 
