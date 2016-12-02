@@ -931,7 +931,7 @@ public class ClientCluster extends ShardedJedisSentinelPool implements RedisServ
     // public Long pexpire(byte[] key, long milliseconds) { //
     // ShardedJedis redis = null; //
     //
-    // 
+    //
     // try { // redis = getResource();
     // return  redis.pexpire(key, milliseconds);
     // } catch (Exception e) { //
@@ -947,7 +947,7 @@ public class ClientCluster extends ShardedJedisSentinelPool implements RedisServ
     // public Long pexpire(String key, long milliseconds) { //
     // ShardedJedis redis = null; //
     //
-    // 
+    //
     // try { // redis = getResource();
     // return  redis.pexpire(key, milliseconds);
     // } catch (Exception e) { //
@@ -963,7 +963,7 @@ public class ClientCluster extends ShardedJedisSentinelPool implements RedisServ
     // public Long pexpireAt(byte[] key, long milliseconds) { //
     // ShardedJedis redis = null; //
     //
-    // 
+    //
     // try { // redis = getResource();
     // return  redis.pexpireAt(key, milliseconds);
     // } catch (Exception e) { //
@@ -979,7 +979,7 @@ public class ClientCluster extends ShardedJedisSentinelPool implements RedisServ
     // public Long pexpireAt(String key, long milliseconds) { //
     // ShardedJedis redis = null; //
     //
-    // 
+    //
     // try { // redis = getResource();
     // return  redis.pexpireAt(key, milliseconds);
     // } catch (Exception e) { //
@@ -995,7 +995,7 @@ public class ClientCluster extends ShardedJedisSentinelPool implements RedisServ
     // public String rename(byte[] oldkey, byte[] newkey) { //
     // ShardedJedis redis = null; //
     //
-    // 
+    //
     // try { // redis = getResource();
     // return  redis.rename(oldkey, newkey);
     // } catch (Exception e) { //
@@ -1011,7 +1011,7 @@ public class ClientCluster extends ShardedJedisSentinelPool implements RedisServ
     // public String rename(String oldkey, String newkey) { //
     // ShardedJedis redis = null; //
     //
-    // 
+    //
     // try { // redis = getResource();
     // return  redis.rename(oldkey, newkey);
     // } catch (Exception e) { //
@@ -1027,7 +1027,7 @@ public class ClientCluster extends ShardedJedisSentinelPool implements RedisServ
     // public Long renamenx(byte[] oldkey, byte[] newkey) { //
     // ShardedJedis redis = null; //
     //
-    // 
+    //
     // try { // redis = getResource();
     // return  redis.renamenx(oldkey, newkey);
     // } catch (Exception e) { //
@@ -1043,7 +1043,7 @@ public class ClientCluster extends ShardedJedisSentinelPool implements RedisServ
     // public Long renamenx(String oldkey, String newkey) { //
     // ShardedJedis redis = null; //
     //
-    // 
+    //
     // try { // redis = getResource();
     // return  redis.renamenx(oldkey, newkey);
     // } catch (Exception e) { //
@@ -1367,7 +1367,7 @@ public class ClientCluster extends ShardedJedisSentinelPool implements RedisServ
     // public Set<byte[]> sunion(byte[]... keys) { //
     // ShardedJedis redis = null; //
     //
-    // 
+    //
     // try { // redis = getResource();
     // return  redis.sunion(keys);
     // } catch (Exception e) { //
@@ -1383,7 +1383,7 @@ public class ClientCluster extends ShardedJedisSentinelPool implements RedisServ
     // public Set<String> sunion(String... keys) { //
     // ShardedJedis redis = null; //
     //
-    // 
+    //
     // try { // redis = getResource();
     // return  redis.sunion(keys);
     // } catch (Exception e) { //
@@ -1845,7 +1845,7 @@ public class ClientCluster extends ShardedJedisSentinelPool implements RedisServ
     // public Long pttl(String key) { //
     // ShardedJedis redis = null; //
     //
-    // 
+    //
     // try { // redis = getResource();
     // return  redis.pttl(key);
     // } catch (Exception e) { //
@@ -1861,7 +1861,7 @@ public class ClientCluster extends ShardedJedisSentinelPool implements RedisServ
     // public Long pttl(byte[] key) { //
     // ShardedJedis redis = null; //
     //
-    // 
+    //
     // try { // redis = getResource();
     // return  redis.pttl(key);
     // } catch (Exception e) { //

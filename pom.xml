@@ -396,6 +396,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
                 <configuration>
+                    <!-- 参数名编译后不改变-->
+                    <compilerArgument>-parameters</compilerArgument>
                     <source>${compiler.version}</source>
                     <target>${compiler.version}</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
