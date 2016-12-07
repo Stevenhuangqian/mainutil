@@ -24,16 +24,20 @@ public class CacheEntityUtil {
                         long startTime = System.currentTimeMillis();
                         Set<Entry<String, CacheEntity>> set = map.entrySet();
                         int before = map.size();
-                        for (Entry<String, CacheEntity> keyValue : set) {
-                            CacheEntity temp = keyValue.getValue();
-                            if (temp == null || temp.ttl() <= 0L) {
-                                map.remove(keyValue.getKey());
-                                logger.debug("timeout:key={}", keyValue.getKey());
+
+                        if (before>0){
+                            for (Entry<String, CacheEntity> keyValue : set) {
+                                CacheEntity temp = keyValue.getValue();
+                                if (temp == null || temp.ttl() <= 0L) {
+                                    map.remove(keyValue.getKey());
+                                    logger.debug("timeout:key={}", keyValue.getKey());
+                                }
                             }
+                            int after = map.size();
+                            logger.info("memory cache size:before={},after={},time={}milliseconds", before, after,
+                                    (System.currentTimeMillis() - startTime));
                         }
-                        int after = map.size();
-                        logger.info("memory cache size:before={},after={},time={}milliseconds", before, after,
-                                (System.currentTimeMillis() - startTime));
+
                     } catch (Throwable e) {
                         logger.error("Throwable:" + e.getMessage(), e);
                     }
