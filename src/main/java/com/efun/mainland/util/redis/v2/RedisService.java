@@ -20,7 +20,11 @@ public interface RedisService {
 
     <T> T getCacheByKey(String key, Class<T> classType);
 
-    <T> boolean addCache(String key, T t, Class<T> classType, int seconds);
+    default <T> boolean addCache(String key, T t, Class<T> classType, int seconds){
+        return addCache(key,t,classType,seconds,true);
+    }
+
+    <T> boolean addCache(String key, T t, Class<T> classType, int seconds, boolean force);
 
     <T> boolean deleteCache(String key, Class<T> classType);
 

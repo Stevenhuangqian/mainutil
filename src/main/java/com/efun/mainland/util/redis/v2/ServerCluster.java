@@ -268,10 +268,13 @@ public class ServerCluster extends JedisCluster implements RedisService {
     }
 
     @Override
-    public <T> boolean addCache(String key, T t, Class<T> classType, int seconds) {
+    public <T> boolean addCache(String key, T t, Class<T> classType, int seconds, boolean force) {
         try {
-            String result = setex(RedisHelperUtil.loadKey(classType, key, loadCachePrefix()), seconds, CommonUtil.serialize(t));
-            return "OK".equals(result);
+            if (force){
+                return "OK".equals(setex(RedisHelperUtil.loadKey(classType, key, loadCachePrefix()), seconds, CommonUtil.serialize(t)));
+            }else{
+                return "OK".equals(set(RedisHelperUtil.loadKey(classType, key, loadCachePrefix()),CommonUtil.serialize(t),CommonUtil.stringToByte(RedisHelperUtil.NX),CommonUtil.stringToByte(RedisHelperUtil.EX),seconds));
+            }
         } catch (Exception e) {
             log.error(classType.getName() + " Serializable no:" + e.getMessage(), e);
             return false;

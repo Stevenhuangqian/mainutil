@@ -64,7 +64,7 @@ public class CacheUtil {
 	/**
 	 * 添加缓存
 	 * 
-	 * @see addCache(String key, T t, Class<T> classType, int seconds)
+	 * @see #addCache(String, Object, Class, int, boolean)
 	 * @param key
 	 * @param t
 	 * @param classType
@@ -78,7 +78,7 @@ public class CacheUtil {
 	/**
 	 * 更新缓存
 	 * 
-	 * @see addCache(String key, T t, Class<T> classType, int seconds)
+	 * @see #addCache(String, Object, Class, int, boolean)
 	 * @param key
 	 * @param t
 	 * @param classType
@@ -92,7 +92,7 @@ public class CacheUtil {
 	/**
 	 * 添加缓存
 	 * 
-	 * @see addCache(String key, T t, Class<T> classType, int seconds)
+	 * @see #addCache(String, Object, Class, int, boolean)
 	 * @param key
 	 * @param t
 	 * @param classType
@@ -117,7 +117,7 @@ public class CacheUtil {
 	/**
 	 * 更新缓存<br/>
 	 * 
-	 * @see addCache(String key, T t, Class<T> classType, int seconds)
+	 * @see #addCache(String, Object, Class, int, boolean)
 	 * 
 	 * @param key
 	 * @param t
@@ -137,23 +137,39 @@ public class CacheUtil {
 	 * @param t
 	 * @param classType
 	 * @param seconds
+	 * @param force
 	 * @return
 	 */
-	public static final <T> boolean addCache(String key, T t, Class<T> classType, int seconds) {
+	public static final <T> boolean addCache(String key, T t, Class<T> classType, int seconds, boolean force) {
 		try {
-			String result = RedisUtil.setex(loadKey(classType, key), seconds, CommonUtil.serialize(t));
-			return "OK".equals(result);
+			if (force){
+				return "OK".equals(RedisUtil.setex(loadKey(classType, key), seconds, CommonUtil.serialize(t)));
+			}else{
+				return "OK".equals(RedisUtil.set(loadKey(classType, key),CommonUtil.serialize(t),CommonUtil.stringToByte(Redis.NX),CommonUtil.stringToByte(Redis.EX),seconds));
+			}
 		} catch (Exception e) {
 			logger.error(classType.getName() + " Serializable no:" + e.getMessage(), e);
 			return false;
 		}
+	}
 
+	/**
+	 * @see #addCache(String, Object, Class, int, boolean)
+	 * @param key
+	 * @param t
+	 * @param classType
+	 * @param seconds
+	 * @param <T>
+	 * @return
+	 */
+	public static final <T> boolean addCache(String key, T t, Class<T> classType, int seconds) {
+		return  addCache(key,t,classType,seconds,true);
 	}
 
 	/**
 	 * 更新缓存<br/>
 	 * 
-	 * @see addCache(String key, T t, Class<T> classType, int seconds)
+	 * @see #addCache(String, Object, Class, int, boolean)
 	 * @param key
 	 * @param t
 	 * @param classType

@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CacheEntityUtil {
     private final static Logger logger = LoggerFactory.getLogger(CacheEntityUtil.class);
     private final static Timer timer = new Timer("delay-clear-delete-cache-timer");
-    private final static long time = 10 * 60 * 1000;
+    private final static long time = 5 * 60 * 1000;
     private final static ConcurrentHashMap<String, CacheEntity> map = new ConcurrentHashMap<String, CacheEntity>();
 
     static {
@@ -32,7 +32,7 @@ public class CacheEntityUtil {
                             }
                         }
                         int after = map.size();
-                        logger.debug("cache size:before={},after={},time={}milliseconds", before, after,
+                        logger.info("memory cache size:before={},after={},time={}milliseconds", before, after,
                                 (System.currentTimeMillis() - startTime));
                     } catch (Throwable e) {
                         logger.error("Throwable:" + e.getMessage(), e);
@@ -65,9 +65,8 @@ public class CacheEntityUtil {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public static final <T> CacheEntity<T> getCache(String key) {
-        CacheEntity cacheEntity = null;
+        CacheEntity<T> cacheEntity = null;
         if (key != null) {
             cacheEntity = map.get(key);
             if (cacheEntity != null) {
@@ -81,6 +80,6 @@ public class CacheEntityUtil {
                 }
             }
         }
-        return ((CacheEntity<T>) cacheEntity);
+        return cacheEntity;
     }
 }
