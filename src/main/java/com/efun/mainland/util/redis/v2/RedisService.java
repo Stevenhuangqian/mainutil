@@ -26,11 +26,15 @@ public interface RedisService {
 
     <T> boolean addCache(String key, T t, Class<T> classType, int seconds, boolean force);
 
-    <T> boolean deleteCache(String key, Class<T> classType);
+    default <T> boolean deleteCache(String key, Class<T> classType){
+        return deleteCache(key,classType,true);
+    }
 
     default boolean deleteCache(String key) {
         return deleteCache(key, null);
     }
+
+    <T> boolean deleteCache(String key, Class<T> classType, boolean delay);
 
     boolean isServerCluster();
 

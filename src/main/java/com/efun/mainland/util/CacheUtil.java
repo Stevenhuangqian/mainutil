@@ -188,16 +188,25 @@ public class CacheUtil {
 	 * @return
 	 */
 	public static final <T> boolean deleteCache(String key, Class<T> classType) {
+		return deleteCache(key,classType,true);
+	}
 
+	/**
+	 * 删除缓存
+	 * @param key
+	 * @param classType
+	 * @param delay
+	 * @param <T>
+	 * @return
+	 */
+	public static final <T> boolean deleteCache(String key, Class<T> classType, boolean delay) {
 		try {
-			return RedisUtil.del(loadKey(classType, key),true) > 0L;
+			return RedisUtil.del(loadKey(classType, key),delay) > 0L;
 		} catch (Exception e) {
 			logger.error(classType.getName() + " :" + e.getMessage(), e);
 			return false;
 		}
-
 	}
-
 	/**
 	 * 删除缓存
 	 * 

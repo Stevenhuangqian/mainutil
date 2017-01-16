@@ -3547,9 +3547,9 @@ public class ClientCluster extends ShardedJedisSentinelPool implements RedisServ
     }
 
     @Override
-    public <T> boolean deleteCache(String key, Class<T> classType) {
+    public <T> boolean deleteCache(String key, Class<T> classType, boolean delay) {
         try {
-            return del(RedisHelperUtil.loadKey(classType, key, loadCachePrefix()), true) > 0L;
+            return del(RedisHelperUtil.loadKey(classType, key, loadCachePrefix()), delay) > 0L;
         } catch (Exception e) {
             log.error(classType.getName() + " :" + e.getMessage(), e);
             return false;
