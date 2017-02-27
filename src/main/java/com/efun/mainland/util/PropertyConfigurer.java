@@ -29,7 +29,7 @@ public class PropertyConfigurer extends PropertyPlaceholderConfigurer {
 
 	private static final String CLASSPATH = "classpath:";
 	private static final String SYSTEM_PROPERTY_REGION_KEY = "efunSystemPropertyRegion";
-	private static final String SYSTEM_PROPERTY_REGION_VALUE = System.getProperty(SYSTEM_PROPERTY_REGION_KEY);
+	private static String SYSTEM_PROPERTY_REGION_VALUE = null;
 
 	private List<Properties> mpropList = new ArrayList<Properties>();
 	protected String prop;
@@ -75,6 +75,9 @@ public class PropertyConfigurer extends PropertyPlaceholderConfigurer {
 	}
 
 	public static final String getRegionSystemProperty() {
+		if (SYSTEM_PROPERTY_REGION_VALUE == null) {
+			SYSTEM_PROPERTY_REGION_VALUE = System.getProperty(SYSTEM_PROPERTY_REGION_KEY);
+		}
 		return SYSTEM_PROPERTY_REGION_VALUE;
 	}
 

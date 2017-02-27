@@ -206,12 +206,12 @@ public final class ZKCurator {
                             logger.info("zkpath:{},path:{},filepath:{}", zkpath, path, filePath);
 
                             File file = new File(classpath + tempPath, tempName);
-                            File backups = new File(webroot, "backups");
+                            File backups = new File(webroot, "temp/backups");
                             if ((!backups.exists()) || (!backups.isDirectory())) {
                                 backups.mkdir();
                             }
                             if (tempPath.length() > 0) {
-                                backups = new File(webroot + "backups" + File.separator + tempPath);
+                                backups = new File(webroot + "temp/backups" + File.separator + tempPath);
                                 if ((!backups.exists()) || (!backups.isDirectory())) {
                                     backups.mkdir();
                                 }
