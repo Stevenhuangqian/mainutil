@@ -58,7 +58,7 @@ public class ShardedJedisSentinelPool2 extends Pool<ShardedJedis> {
 	private static final int MAX_RETRY_SENTINEL = 10;
 
 	public ShardedJedisSentinelPool2(Set<String> masterNames, Set<String> sentinels,
-			final GenericObjectPoolConfig poolConfig) {
+									 final GenericObjectPoolConfig poolConfig) {
 		this(masterNames, sentinels, poolConfig, Protocol.DEFAULT_TIMEOUT, null, Protocol.DEFAULT_DATABASE);
 	}
 
@@ -72,17 +72,17 @@ public class ShardedJedisSentinelPool2 extends Pool<ShardedJedis> {
 	}
 
 	public ShardedJedisSentinelPool2(Set<String> masterNames, Set<String> sentinels,
-			final GenericObjectPoolConfig poolConfig, int timeout, final String password) {
+									 final GenericObjectPoolConfig poolConfig, int timeout, final String password) {
 		this(masterNames, sentinels, poolConfig, timeout, password, Protocol.DEFAULT_DATABASE);
 	}
 
 	public ShardedJedisSentinelPool2(Set<String> masterNames, Set<String> sentinels,
-			final GenericObjectPoolConfig poolConfig, final int timeout) {
+									 final GenericObjectPoolConfig poolConfig, final int timeout) {
 		this(masterNames, sentinels, poolConfig, timeout, null, Protocol.DEFAULT_DATABASE);
 	}
 
 	public ShardedJedisSentinelPool2(Set<String> masterNames, Set<String> sentinels,
-			final GenericObjectPoolConfig poolConfig, final String password) {
+									 final GenericObjectPoolConfig poolConfig, final String password) {
 		this(masterNames, sentinels, poolConfig, Protocol.DEFAULT_TIMEOUT, password);
 	}
 
@@ -90,7 +90,7 @@ public class ShardedJedisSentinelPool2 extends Pool<ShardedJedis> {
 	 * Master-Slave must be use the same config
 	 */
 	public ShardedJedisSentinelPool2(Set<String> masterNames, Set<String> sentinels,
-			final GenericObjectPoolConfig poolConfig, int timeout, final String password, final int database) {
+									 final GenericObjectPoolConfig poolConfig, int timeout, final String password, final int database) {
 		if (!(masterNames instanceof LinkedHashSet)) {
 			throw new IllegalArgumentException("Parameter 'masterNames' must be typeof java.util.LinkedHashSet.");
 		}
@@ -151,11 +151,11 @@ public class ShardedJedisSentinelPool2 extends Pool<ShardedJedis> {
 						if (slaveAddrs != null) {
 							for (Map<String, String> slave : slaveAddrs) {
 								if ("slave".equals(slave.get("flags"))) { // is
-																			// normal
-																			// worked
-																			// slave
-																			// at
-																			// now
+									// normal
+									// worked
+									// slave
+									// at
+									// now
 									slaves.add(toHostAndPort(Arrays.asList(slave.get("ip"), slave.get("port"))));
 								} else {
 									logger.warn("slave={} is down",
@@ -392,7 +392,7 @@ public class ShardedJedisSentinelPool2 extends Pool<ShardedJedis> {
 		}
 
 		public ShardedMasterListener(Set<String> masterNames, String host, int port,
-				long subscribeRetryWaitTimeMillis) {
+									 long subscribeRetryWaitTimeMillis) {
 			this(masterNames, host, port);
 			this.subscribeRetryWaitTimeMillis = subscribeRetryWaitTimeMillis;
 		}
@@ -455,8 +455,8 @@ public class ShardedJedisSentinelPool2 extends Pool<ShardedJedis> {
 								}
 							}
 							if ("+switch-master".equals(channel)) { // master
-																	// has been
-																	// switched
+								// has been
+								// switched
 								String[] messages = message.split(" ");
 								if (messages.length == 5) {
 									if (masterNames.contains(messages[0])) {
@@ -478,7 +478,7 @@ public class ShardedJedisSentinelPool2 extends Pool<ShardedJedis> {
 								}
 							}
 							if ("+slave".equals(channel)) { // has new slave
-															// joined
+								// joined
 								String[] messages = message.split(" ");
 								if (messages.length == 8) {
 									if ("slave".equals(messages[0])) {
