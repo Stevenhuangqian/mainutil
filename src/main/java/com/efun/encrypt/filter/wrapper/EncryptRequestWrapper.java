@@ -12,10 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * EncryptRequestWrapper
@@ -25,7 +22,7 @@ import java.util.Vector;
  */
 public class EncryptRequestWrapper extends HttpServletRequestWrapper {
 
-    private Map params;
+    private Map<String, String[]> params;
 
     private String queryString;
 
@@ -52,7 +49,7 @@ public class EncryptRequestWrapper extends HttpServletRequestWrapper {
      * @param bodyString
      * @return
      */
-    private Map createParams(String queryString, String bodyString) {
+    private Map<String, String[]> createParams(String queryString, String bodyString) {
         Map params = new HashMap<String, Object>();
         if (StringUtils.isNotBlank(queryString)) {
             params.putAll(parseForm(queryString));
@@ -63,20 +60,30 @@ public class EncryptRequestWrapper extends HttpServletRequestWrapper {
         return params;
     }
 
-    private Map parseForm(String form) {
-        Map map = new HashMap<String, Object>();
+    private Map<String, String[]> parseForm(String form) {
+        Map<String, String[]> params = new HashMap<String, String[]>();
         if (form.trim().length() > 0) {
+            Map<String, List<String>> map = new HashMap<String, List<String>>();
             String[] kvAarry = form.split("&");
             for (String item : kvAarry) {
                 String[] kv = item.split("=");
                 if (kv.length > 1) {
-                    map.put(kv[0], kv[1]);
-                }else{
-                	map.put(kv[0], "");
+                    String key = kv[0].trim();
+                    String value = kv.length == 2 && kv[1] != null ? kv[1].trim() : "";
+                    List<String> values = map.get(key);
+                    if (values == null) {
+                        values = new ArrayList<String>();
+                    }
+                    values.add(value);
+                    map.put(key, values);
                 }
             }
+            Set<Map.Entry<String, List<String>>> entrySet = map.entrySet();
+            for (Map.Entry<String, List<String>> item : entrySet) {
+                params.put(item.getKey(), item.getValue().toArray(new String[item.getValue().size()]));
+            }
         }
-        return map;
+        return params;
     }
 
     @Override
@@ -86,12 +93,13 @@ public class EncryptRequestWrapper extends HttpServletRequestWrapper {
 
     @Override
     public String getParameter(String name) {
-        return (String) this.params.get(name);
+        String[] s = this.params.get(name);
+        return s != null && s.length >0 ? s[0] : "";
     }
 
     @Override
     public Map<String, String[]> getParameterMap() {
-        return (Map<String, String[]>)this.params;
+        return this.params;
     }
 
     @Override
