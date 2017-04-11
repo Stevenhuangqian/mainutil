@@ -145,7 +145,7 @@ public class MailOperator {
 		msg.setContent(mulp);
 		// 登陆邮件服务器进行用户验证
 		Transport tran = session.getTransport(protocol);
-		tran.connect(host, user, password);
+		tran.connect(host, port, user, password);
 		// 发送
 		tran.sendMessage(msg, msg.getAllRecipients());
 		bool = true;
