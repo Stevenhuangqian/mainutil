@@ -110,7 +110,7 @@ public class EncryptRequestWrapper extends HttpServletRequestWrapper {
 
     @Override
     public String[] getParameterValues(String name) {
-        return (String[]) this.params.values().toArray();
+        return this.params.get(name);
     }
 
     @Override

@@ -33,7 +33,6 @@ public class EncryptResponseWrapper extends HttpServletResponseWrapper {
         out = new WapperedOutputStream(buffer);
         //强制指定编码utf-8
         writer = new PrintWriter(new OutputStreamWriter(buffer, charset));
-        Logger.getLogger(this.getClass()).info("charset:--------"+response.getCharacterEncoding());
     }
 
     @Override
