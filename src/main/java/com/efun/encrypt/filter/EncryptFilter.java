@@ -7,7 +7,8 @@ import com.efun.encrypt.filter.wrapper.EncryptRequestWrapper;
 import com.efun.encrypt.filter.wrapper.EncryptResponseWrapper;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -29,7 +30,7 @@ import java.util.Base64;
  */
 public class EncryptFilter implements Filter {
 
-    private final Logger logger = Logger.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private static String charset = "utf-8";
     
