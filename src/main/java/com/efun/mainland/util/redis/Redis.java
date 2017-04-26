@@ -4,6 +4,7 @@ import com.efun.mainland.util.CacheUtil;
 import com.efun.mainland.util.CommonUtil;
 import com.efun.mainland.util.PropertiesCacheUtil;
 import com.efun.mainland.util.PropertiesFileLoader;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import redis.clients.jedis.*;
 
@@ -178,6 +179,7 @@ public final class Redis {
             String sentinels = PropertiesCacheUtil.getValue("redis.sentinels", REDIS_CONFIG_FILE);
 
             String nodes = PropertiesCacheUtil.getValue("cluster.nodes", REDIS_CONFIG_FILE);
+            String password = PropertiesCacheUtil.getValue("redis.password", REDIS_CONFIG_FILE);
             if (CommonUtil.objectIsNotNull(nodes)) {
                 //服务器端集群初始化
                 Set<HostAndPort> nodesSet = new HashSet<HostAndPort>();
@@ -189,7 +191,11 @@ public final class Redis {
                     }
                 }
 
-                Cluster.initCluster(nodesSet, timeout, poolConfig);
+                if (StringUtils.isNotBlank(password)) {
+                    Cluster.initCluster(nodesSet, timeout, timeout, 5, password, poolConfig);
+                } else {
+                    Cluster.initCluster(nodesSet, timeout, poolConfig);
+                }
                 log.info(new StringBuilder().append("cluster.nodes(config)>>>").append(nodes).toString());
                 System.out.println(new StringBuilder().append("cluster.nodes(config)>>>").append(nodes).toString());
 
@@ -231,7 +237,11 @@ public final class Redis {
                 System.out.println(new StringBuilder().append("redis.sentinels>>>").append(sentinels).toString());
 
                 Set<String> nameSet = new LinkedHashSet<String>(serverNameList);
-                pool = new ShardedJedisSentinelPool2(nameSet, sentinelSet, poolConfig, timeout);
+                if (StringUtils.isNotBlank(password)) {
+                    pool = new ShardedJedisSentinelPool2(nameSet, sentinelSet, poolConfig, timeout, password);
+                } else {
+                    pool = new ShardedJedisSentinelPool2(nameSet, sentinelSet, poolConfig, timeout);
+                }
                 if (pool == null) {
                     log.error("ShardedJedisSentinelPool init fail");
                     System.out.println("ShardedJedisSentinelPool init fail");

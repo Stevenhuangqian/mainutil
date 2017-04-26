@@ -73,6 +73,16 @@ public final class Cluster {
 		}
 	}
 
+	protected static final void initCluster(Set<HostAndPort> redisClusterNode, int connectionTimeout, int soTimeout,
+											int maxRedirections, String password, final GenericObjectPoolConfig poolConfig) {
+		synchronized (Cluster.class) {
+			if (redisCluster == null) {
+				redisCluster = new RedisCluster(redisClusterNode, connectionTimeout, soTimeout, maxRedirections, password,
+						poolConfig);
+			}
+		}
+	}
+
 	protected static final RedisCluster getInstance() {
 		return redisCluster;
 	}

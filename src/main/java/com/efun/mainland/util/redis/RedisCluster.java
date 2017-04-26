@@ -16,6 +16,39 @@ import redis.clients.jedis.JedisCluster;
  */
 public class RedisCluster extends JedisCluster {
 
+
+	public RedisCluster(HostAndPort node) {
+		super(node);
+	}
+
+	public RedisCluster(HostAndPort node, int timeout) {
+		super(node, timeout);
+	}
+
+	public RedisCluster(HostAndPort node, int timeout, int maxAttempts) {
+		super(node, timeout, maxAttempts);
+	}
+
+	public RedisCluster(HostAndPort node, GenericObjectPoolConfig poolConfig) {
+		super(node, poolConfig);
+	}
+
+	public RedisCluster(HostAndPort node, int timeout, GenericObjectPoolConfig poolConfig) {
+		super(node, timeout, poolConfig);
+	}
+
+	public RedisCluster(HostAndPort node, int timeout, int maxAttempts, GenericObjectPoolConfig poolConfig) {
+		super(node, timeout, maxAttempts, poolConfig);
+	}
+
+	public RedisCluster(HostAndPort node, int connectionTimeout, int soTimeout, int maxAttempts, GenericObjectPoolConfig poolConfig) {
+		super(node, connectionTimeout, soTimeout, maxAttempts, poolConfig);
+	}
+
+	public RedisCluster(HostAndPort node, int connectionTimeout, int soTimeout, int maxAttempts, String password, GenericObjectPoolConfig poolConfig) {
+		super(node, connectionTimeout, soTimeout, maxAttempts, password, poolConfig);
+	}
+
 	public RedisCluster(Set<HostAndPort> nodes) {
 		super(nodes);
 	}
@@ -24,26 +57,28 @@ public class RedisCluster extends JedisCluster {
 		super(nodes, timeout);
 	}
 
-	public RedisCluster(Set<HostAndPort> nodes, int timeout, int maxRedirections) {
-		super(nodes, timeout, maxRedirections);
+	public RedisCluster(Set<HostAndPort> nodes, int timeout, int maxAttempts) {
+		super(nodes, timeout, maxAttempts);
 	}
 
-	public RedisCluster(Set<HostAndPort> nodes, final GenericObjectPoolConfig poolConfig) {
+	public RedisCluster(Set<HostAndPort> nodes, GenericObjectPoolConfig poolConfig) {
 		super(nodes, poolConfig);
 	}
 
-	public RedisCluster(Set<HostAndPort> nodes, int timeout, final GenericObjectPoolConfig poolConfig) {
+	public RedisCluster(Set<HostAndPort> nodes, int timeout, GenericObjectPoolConfig poolConfig) {
 		super(nodes, timeout, poolConfig);
 	}
 
-	public RedisCluster(Set<HostAndPort> redisClusterNode, int timeout, int maxRedirections,
-			final GenericObjectPoolConfig poolConfig) {
-		super(redisClusterNode, timeout, maxRedirections, poolConfig);
+	public RedisCluster(Set<HostAndPort> jedisClusterNode, int timeout, int maxAttempts, GenericObjectPoolConfig poolConfig) {
+		super(jedisClusterNode, timeout, maxAttempts, poolConfig);
 	}
 
-	public RedisCluster(Set<HostAndPort> redisClusterNode, int connectionTimeout, int soTimeout, int maxRedirections,
-			final GenericObjectPoolConfig poolConfig) {
-		super(redisClusterNode, connectionTimeout, soTimeout, maxRedirections, poolConfig);
+	public RedisCluster(Set<HostAndPort> jedisClusterNode, int connectionTimeout, int soTimeout, int maxAttempts, GenericObjectPoolConfig poolConfig) {
+		super(jedisClusterNode, connectionTimeout, soTimeout, maxAttempts, poolConfig);
+	}
+
+	public RedisCluster(Set<HostAndPort> jedisClusterNode, int connectionTimeout, int soTimeout, int maxAttempts, String password, GenericObjectPoolConfig poolConfig) {
+		super(jedisClusterNode, connectionTimeout, soTimeout, maxAttempts, password, poolConfig);
 	}
 
 	/**
