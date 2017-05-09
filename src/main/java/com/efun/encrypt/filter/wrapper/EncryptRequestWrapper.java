@@ -94,7 +94,7 @@ public class EncryptRequestWrapper extends HttpServletRequestWrapper {
     @Override
     public String getParameter(String name) {
         String[] s = this.params.get(name);
-        return s != null && s.length >0 ? s[0] : "";
+        return s != null && s.length >0 ? s[0] : null;
     }
 
     @Override
