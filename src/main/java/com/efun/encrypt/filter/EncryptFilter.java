@@ -53,36 +53,41 @@ public class EncryptFilter implements Filter {
 
     @Override  
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
-        HttpServletResponse response = (HttpServletResponse) servletResponse;
-        response.setCharacterEncoding("utf-8");
-        //透传编码
-        charset = StringUtils.isNotBlank(request.getCharacterEncoding()) ? request.getCharacterEncoding() : charset;
+        try {
+            HttpServletRequest request = (HttpServletRequest) servletRequest;
+            HttpServletResponse response = (HttpServletResponse) servletResponse;
+            response.setCharacterEncoding("utf-8");
+            //透传编码
+            charset = StringUtils.isNotBlank(request.getCharacterEncoding()) ? request.getCharacterEncoding() : charset;
 
-        //获取RSA加密后的AES密钥
-        String requestId = request.getHeader(EFUN_REQUEST_KEY);
-        boolean isEfunRequest = true;
-        if (StringUtils.isBlank(requestId)) {
-            requestId = request.getHeader(REQUEST_KEY);
-            isEfunRequest = false;
-        }
+            //获取RSA加密后的AES密钥
+            String requestId = request.getHeader(EFUN_REQUEST_KEY);
+            boolean isEfunRequest = true;
+            if (StringUtils.isBlank(requestId)) {
+                requestId = request.getHeader(REQUEST_KEY);
+                isEfunRequest = false;
+            }
 
-        //判断内容是否有经过加密
-        if (StringUtils.isNotBlank(requestId)) {
+            //判断内容是否有经过加密
+            if (StringUtils.isNotBlank(requestId)) {
 
-            //解密request
-            EncryptRequestWrapper requestWrapper = decryptRequest(requestId, request);
+                //解密request
+                EncryptRequestWrapper requestWrapper = decryptRequest(requestId, request);
 
-            EncryptResponseWrapper responseWrapper = new EncryptResponseWrapper(response);
-            //进入调用链
-            filterChain.doFilter(requestWrapper, responseWrapper);
+                EncryptResponseWrapper responseWrapper = new EncryptResponseWrapper(response);
+                //进入调用链
+                filterChain.doFilter(requestWrapper, responseWrapper);
 
-            //加密response
-            encryptResponse(responseWrapper, response, isEfunRequest);
+                //加密response
+                encryptResponse(responseWrapper, response, isEfunRequest);
 
 
-        } else {
-            filterChain.doFilter(servletRequest, servletResponse);
+            } else {
+                filterChain.doFilter(servletRequest, servletResponse);
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new EncryptException(e.getMessage(), e);
         }
 
     }
@@ -91,7 +96,7 @@ public class EncryptFilter implements Filter {
      * 解密输入内容
      * @return
      */
-    private EncryptRequestWrapper decryptRequest(String requestId, HttpServletRequest request) {
+    private EncryptRequestWrapper decryptRequest(String requestId, HttpServletRequest request) throws Exception {
         //获取AES解密使用的key和iv,网络交互的信息都统一用base64转码过。
         byte[] key_iv = decryptAESKey(Base64.getDecoder().decode(requestId));
         byte[] key = new byte[16];
@@ -102,7 +107,7 @@ public class EncryptFilter implements Filter {
         String bodyString = null;
         InputStream inputStream = null;
         String method = request.getMethod();
-        try {
+
             //提取数据，重新包装一个新的inputStream对象。
             if ("get".equalsIgnoreCase(method)) {
                 queryString = new String(AESUtils.decrypt(Base64.getDecoder().decode(request.getQueryString()), key, iv), charset);
@@ -115,9 +120,6 @@ public class EncryptFilter implements Filter {
                 bodyString = URLDecoder.decode(new String(data, charset));
                 inputStream = new ByteArrayInputStream(URLDecoder.decode(bodyString).getBytes(charset));
             }
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
         return new EncryptRequestWrapper(request, queryString, bodyString, inputStream);
     }
 

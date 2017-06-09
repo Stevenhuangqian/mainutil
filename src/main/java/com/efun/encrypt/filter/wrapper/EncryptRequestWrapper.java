@@ -76,11 +76,18 @@ public class EncryptRequestWrapper extends HttpServletRequestWrapper {
                     }
                     values.add(value);
                     map.put(key, values);
+                } else {
+                    String key = kv[0].trim();
+                    map.put(key, null);
                 }
             }
             Set<Map.Entry<String, List<String>>> entrySet = map.entrySet();
             for (Map.Entry<String, List<String>> item : entrySet) {
-                params.put(item.getKey(), item.getValue().toArray(new String[item.getValue().size()]));
+                if (item.getValue() == null) {
+                    params.put(item.getKey(), null);
+                } else {
+                    params.put(item.getKey(), item.getValue().toArray(new String[item.getValue().size()]));
+                }
             }
         }
         return params;
