@@ -84,7 +84,7 @@ public class EncryptRequestWrapper extends HttpServletRequestWrapper {
             Set<Map.Entry<String, List<String>>> entrySet = map.entrySet();
             for (Map.Entry<String, List<String>> item : entrySet) {
                 if (item.getValue() == null) {
-                    params.put(item.getKey(), null);
+                    params.put(item.getKey(), new String[1]);
                 } else {
                     params.put(item.getKey(), item.getValue().toArray(new String[item.getValue().size()]));
                 }
