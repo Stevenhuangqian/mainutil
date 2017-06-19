@@ -66,10 +66,10 @@ public class EncryptRequestWrapper extends HttpServletRequestWrapper {
             Map<String, List<String>> map = new HashMap<String, List<String>>();
             String[] kvAarry = form.split("&");
             for (String item : kvAarry) {
-                String[] kv = item.split("=");
-                if (kv.length > 1) {
-                    String key = kv[0].trim();
-                    String value = kv.length == 2 && kv[1] != null ? kv[1].trim() : "";
+                int index = item.indexOf("=");
+                if (index > 0) {
+                    String key = item.substring(0, index).trim();
+                    String value = item.substring(index + 1).trim();
                     List<String> values = map.get(key);
                     if (values == null) {
                         values = new ArrayList<String>();
@@ -77,7 +77,7 @@ public class EncryptRequestWrapper extends HttpServletRequestWrapper {
                     values.add(value);
                     map.put(key, values);
                 } else {
-                    String key = kv[0].trim();
+                    String key = item.trim();
                     map.put(key, null);
                 }
             }
