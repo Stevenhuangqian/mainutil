@@ -69,7 +69,7 @@ public class EncryptRequestWrapper extends HttpServletRequestWrapper {
                 int index = item.indexOf("=");
                 if (index > 0) {
                     String key = item.substring(0, index).trim();
-                    String value = item.substring(index + 1).trim();
+                    String value = item.substring(index + 1);
                     List<String> values = map.get(key);
                     if (values == null) {
                         values = new ArrayList<String>();
