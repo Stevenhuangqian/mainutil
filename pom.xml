@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.efun</groupId>
     <artifactId>mainland-util</artifactId>
-    <version>3.2.5</version>
+    <version>3.2.6</version>
     <name>mainland-util</name>
     <description>Efun_Core</description>
 
@@ -35,6 +35,7 @@
         <curator.version>2.11.0</curator.version>
         <guava.version>18.0</guava.version>
         <jline.version>3.0.0.M1</jline.version>
+        <geoip.version>2.8.0</geoip.version>
 
         <log4j2.version>2.7</log4j2.version>
     </properties>
@@ -321,6 +322,12 @@
             <version>${log4j2.version}</version>
             <type>jar</type>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.maxmind.geoip2</groupId>
+            <artifactId>geoip2</artifactId>
+            <version>${geoip.version}</version>
         </dependency>
 
         <!-- <dependency> -->
