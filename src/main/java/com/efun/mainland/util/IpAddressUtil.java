@@ -5,6 +5,7 @@ import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.model.CityResponse;
 import com.maxmind.geoip2.record.City;
 import com.maxmind.geoip2.record.Country;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,8 +74,8 @@ public final class IpAddressUtil {
 		// strBuilder.append(new Random().nextInt(255)).append(".");
 		// strBuilder.append(new Random().nextInt(255)).append(".");
 		// strBuilder.append(new Random().nextInt(255));
-		System.out.println(" getIpAddress " + "202.167.250.83" + ":" + getIpAddress("218.32.1.28", true));
-		System.out.println(" getIpAddress " + "202.167.250.83" + ":" + getIpAddress("8.8.8.8", true));
+		System.out.println(" getIpAddress " + "202.167.250.83" + ":" + getCity("218.32.1.28", LOCATION_FIELD_NAME_ZH));
+		System.out.println(" getIpAddress " + "202.167.250.83" + ":" + getCountry("8.8.8.8", LOCATION_FIELD_ISOCODE));
 		// }
 		// System.out.println((System.currentTimeMillis()-startTime)+"ms");
 	}
@@ -276,18 +277,60 @@ public final class IpAddressUtil {
 		databaseReaderLoading.set(false);
 	}
 
+	public static final String LOCATION_FIELD_ISOCODE = "iso_code";
+	public static final String LOCATION_FIELD_NAME_ZH = "zh-CN";
+	public static final String LOCATION_FIELD_NAME_DE = "de";
+	public static final String LOCATION_FIELD_NAME_RU = "ru";
+	public static final String LOCATION_FIELD_NAME_PT = "pt-BR";
+	public static final String LOCATION_FIELD_NAME_JA = "ja";
+	public static final String LOCATION_FIELD_NAME_EN = "en";
+	public static final String LOCATION_FIELD_NAME_FR = "fr";
+	public static final String LOCATION_FIELD_NAME_ES = "es";
+
 	/**
-	 * 从ip库中获取ip信息
-	 *
+	 * 获取ip所属国家信息，如果ip库中不存在对应的信息则返回空。
 	 * @param ip
-	 *            ip地址
-	 * @param bl
-	 *            是否需要处理
+	 * @param locationField
+     * @return
+     */
+	public static String getCountry(String ip, String locationField) {
+		CityResponse response = getIpAddress(ip);
+		Country country = response.getCountry();
+		if (country == null) {
+			return null;
+		}
+		if (StringUtils.isBlank(locationField)) {
+			return country.getNames().get(LOCATION_FIELD_NAME_ZH);
+		} else if (LOCATION_FIELD_ISOCODE.equals(locationField)) {
+			return country.getIsoCode();
+		} else {
+			return country.getNames().get(locationField);
+		}
+	}
+
+	/**
+	 * 获取 ip所属城市信息，如果ip库中不存在对应的信息则返回空。
+	 * @param ip
+	 * @param locationField
+     * @return
+     */
+	public static String getCity(String ip, String locationField) {
+		CityResponse response = getIpAddress(ip);
+		City city = response.getCity();
+		if (city == null) {
+			return null;
+		}
+		return city.getNames().get(locationField);
+	}
+
+	/**
+	 * 从ip库中获取ip地址信息
+	 * @param ip
 	 * @return
-	 */
-	public static String getIpAddress(String ip, boolean bl) {
+     */
+	private static CityResponse getIpAddress(String ip) {
 		if (!isBoolIp(ip)) {
-			return ip;
+			return null;
 		}
 		while (databaseReaderLoading.get()) {
 		}
@@ -295,40 +338,17 @@ public final class IpAddressUtil {
 		if (!databaseReaderExists) {
 			System.out.println("DATABASE_READER_FILE load fail>>" + DATABASE_READER_FILE);
 			logger.info("DATABASE_READER_FILE load fail>>" + DATABASE_READER_FILE);
-			return ip;
+			return null;
 		}
-
-		String returnStr = null;
 
 		try {
 			InetAddress ipAddress = InetAddress.getByName(ip);
 			CityResponse response = reader.city(ipAddress);
-			Country country = response.getCountry();
-			String countryCN = country.getNames().get("zh-CN");
-			if (countryCN != null) {
-				returnStr = bl ? countryCN.replaceAll("大韩民国", "韩国") : countryCN;
-			}
-			City city = response.getCity();
-			String cityCN = city.getNames().get("zh-CN");
-			if (cityCN != null) {
-				if (bl) {
-					//是否显示地区+城市
-					//String countryCity = "true";
-					String countryCity = "";
-					if("true".equals(countryCity)){
-						returnStr += cityCN;
-					}
-				} else {
-					returnStr += cityCN;
-				}
-			}
+			return response;
 		} catch (Exception e) {
 			logger.info("DATABASE_READER_FILE select ip fail>>" + ip);
 		}
-		if (returnStr == null) {
-			returnStr = "未知地址";
-		}
-		return returnStr;
+		return null;
 	}
 
 	/**
