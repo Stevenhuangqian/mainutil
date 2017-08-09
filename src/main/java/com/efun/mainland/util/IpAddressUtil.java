@@ -295,6 +295,9 @@ public final class IpAddressUtil {
      */
 	public static String getCountry(String ip, String locationField) {
 		CityResponse response = getIpAddress(ip);
+		if (response == null) {
+			return null;
+		}
 		Country country = response.getCountry();
 		if (country == null) {
 			return null;
@@ -316,6 +319,9 @@ public final class IpAddressUtil {
      */
 	public static String getCity(String ip, String locationField) {
 		CityResponse response = getIpAddress(ip);
+		if (response == null) {
+			return null;
+		}
 		City city = response.getCity();
 		if (city == null) {
 			return null;
