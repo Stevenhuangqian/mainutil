@@ -322,7 +322,7 @@ public final class Redis {
 
     protected final static void returnRedis(ShardedJedis redis) {
         if (redis == null) {
-            log.error("releaseRedis error:redis is null");
+            log.info("releaseRedis error:redis is null");
             return;
         }
         try {
