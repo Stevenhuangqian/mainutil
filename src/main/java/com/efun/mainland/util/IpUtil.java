@@ -99,13 +99,18 @@ public class IpUtil {
 
     /**
      * 是否是内网ip<br/>
-     * 10.*.*.* 172.*.*.* 192.*.*.*
+     * A类 10.0.0.0--10.255.255.255
+     * B类 172.16.0.0--172.31.255.255
+     * C类 192.168.0.0--192.168.255.255
      *
      * @param ip
      * @return
      */
     private static final boolean isIntranet0(String ip) {
-        return ip != null && (ip.startsWith("172.") || ip.startsWith("192.") || ip.startsWith("10."));
+        return ip != null &&
+                (ip.startsWith("10.")
+                        || ip.startsWith("192.168.")
+                        || (ip.compareTo("172.16.0.0") > 0 && ip.compareTo("172.31.255.255") < 0));
     }
 
     /**
