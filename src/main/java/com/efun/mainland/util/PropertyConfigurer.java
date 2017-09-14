@@ -28,6 +28,7 @@ public class PropertyConfigurer extends PropertyPlaceholderConfigurer {
 	private static final Logger logger = LoggerFactory.getLogger(PropertyConfigurer.class);
 
 	private static final String CLASSPATH = "classpath:";
+	private static final String FILEPATH = "file:";
 	private static final String SYSTEM_PROPERTY_REGION_KEY = "efunSystemPropertyRegion";
 	private static String SYSTEM_PROPERTY_REGION_VALUE = null;
 
@@ -36,18 +37,11 @@ public class PropertyConfigurer extends PropertyPlaceholderConfigurer {
 	protected String[] props;
 	protected List<String> propList;
 
-	public String getProp() {
-		return prop;
-	}
 
 	public void setProp(String prop) {
 		this.prop = prop;
 
 		load(prop);
-	}
-
-	public String[] getProps() {
-		return props;
 	}
 
 	public void setProps(String[] props) {
@@ -58,10 +52,6 @@ public class PropertyConfigurer extends PropertyPlaceholderConfigurer {
 				load(prop);
 			}
 		}
-	}
-
-	public List<String> getPropList() {
-		return propList;
 	}
 
 	public void setPropList(List<String> propList) {
@@ -99,8 +89,14 @@ public class PropertyConfigurer extends PropertyPlaceholderConfigurer {
 		return result;
 	}
 
+	/**
+	 * 加载预加载文件，例如数据源。
+	 * 如果系统设置的地区环境变量，默认规则下文件目录下回自动增加地区子文件夹。
+	 * @param path
+     */
 	protected void load(String path) {
 		if (StringUtils.isNotBlank(path)) {
+			//classpath方式读取
 			if (path.startsWith(CLASSPATH)) {
 				String classpath = PropertiesFileLoader.getClassPath();
 				String area = getRegionSystemProperty();
@@ -112,6 +108,16 @@ public class PropertyConfigurer extends PropertyPlaceholderConfigurer {
 
 				logger.info("resources path:" + classpath);
 				System.out.println("resources path:" + classpath);
+
+			//文件系统方式读取
+			} else if (path.startsWith(FILEPATH)) {
+				String area = getRegionSystemProperty();
+				if (area != null) {
+					path = path.substring(0, path.lastIndexOf(File.separatorChar) + 1) + area + path.substring(path.lastIndexOf(File.separatorChar));
+				}
+				path = path.replace(FILEPATH, "");
+				logger.info("resources path:" + path);
+				System.out.println("resources path:" + path);
 			}
 			File file = new File(path);
 			if (file.exists()) {
@@ -142,4 +148,5 @@ public class PropertyConfigurer extends PropertyPlaceholderConfigurer {
 			}
 		}
 	}
+
 }
