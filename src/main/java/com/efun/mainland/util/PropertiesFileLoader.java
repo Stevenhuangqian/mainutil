@@ -189,6 +189,10 @@ public class PropertiesFileLoader {
 				}
 			}
 
+			if(!IS_WINDOWNS&&!url.startsWith("/")){
+				url="/"+url;
+			}
+			
 			int index=url.indexOf("WEB-INF");
 			if(index!=-1){
 				url=url.substring(0, index);
@@ -196,10 +200,16 @@ public class PropertiesFileLoader {
 					url=url.substring(0, url.length()-1);
 				}
 				url=url+File.separator+"WEB-INF"+File.separator+"classes";
-			}else{
+			}else if(SYSTEM_NAME.contains("OS")){
+				
+			}
+			else{
 				File tempD=new File(url).getParentFile();
 				url = getFilePath(tempD,"WEB-INF"+File.separator+"classes");
 			}
+			
+			
+			
 			
 			System.out.println("load ClassLoader finish:"+url);
 			logger.info("load ClassLoader finish:"+url);

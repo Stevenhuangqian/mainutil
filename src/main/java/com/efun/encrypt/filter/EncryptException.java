@@ -12,7 +12,7 @@ import java.io.IOException;
 public class EncryptException extends ServletException {
 
     public EncryptException() {
-        super();
+        super(); 
     }
 
     public EncryptException(String message) {
